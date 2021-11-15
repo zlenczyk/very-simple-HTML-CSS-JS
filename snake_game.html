@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+ <head>
+	<link rel="stylesheet"
+	   href="https://fonts.googleapis.com/css?family=Indie+Flower"/>
+    <meta charset="utf-8">
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ 
+ <style>
+ 
+    #start {
+		margin-left: 525px;
+		width: 250px;
+		height: 60px;
+		font-size: 150%;
+		border-radius: 20px;
+		position: absolute;
+		margin-top: 200px;
+	}
+	
+	#reload {
+		margin-left: 525px;
+		width: 250px;
+		min-height: 60px;
+		font-size: 150%;
+		border-radius: 20px;
+		position: absolute;
+		margin-top: 200px;
+		visibility: hidden;
+	}
+	
+	button:hover {
+        box-shadow: 5px 10px 25px #737373;
+		cursor: pointer;
+    }
+	
+	
+	#ramka {
+		height:500px;
+		width:500px;
+		border:10px ridge #d98cb3;
+		margin-left: 400px;
+		position: absolute;
+		background-color: white;
+	}
+	
+    b  {
+		display:block;
+		height:40px;
+		width:40px;
+		background: none;
+		position: absolute;
+	}
+	
+    #poz {
+		position: relative;
+		width: 1300px;
+		height: 485px;
+		margin: auto;
+	}
+	
+	h1 {
+		font-family: "Indie Flower";
+		font-size: 80px;
+		color: white;
+		text-align:center;
+		margin-top: 15px;
+		margin-bottom: 0px;
+	}
+	
+	p  {
+		display:block;
+		position:absolute;
+		left:200px;
+		top:200px;
+		height:30px;
+		width:30px; 
+		background: radial-gradient(black, green, black);
+		border-radius:20px;
+	}
+	
+	img {
+		display:block;
+		height:40px;
+		width:40px;
+		position: absolute;
+		}
+		
+	body {
+		 background-image: url("jungle2.jpg");
+    }
+	
+ </style>
+
+ <body>
+	<h1>Sssssnake!</h1>
+	<div id="poz">
+		<div id='ramka'><p></p></div>
+		<button id="start" onclick='food(),interval()'>Rozpocznij grę</button>
+		<button id="reload" onclick='location.reload()'></button>
+	</div>	
+
+ </body>
+
+ <script>
+	
+	var x=200;
+	var y=200;
+	var dx=20;
+	var dy=0;
+	var sis;
+	var i=0;
+	var j=1;
+	
+	function move()
+	{
+		$('#ramka').prepend("<p style='left:"+x+"px; top:"+y+"px'></p>");
+		x+=dx;
+		y+=dy;
+		$("p:last").remove();
+    }
+	
+	var key=39;
+	$(document).keydown(
+		function(event){
+			var a = event.keyCode;
+			if(a==37 && key!=39) {dx=-20;dy=0;key=37;};
+			if(a==38 && key!=40) {dx=0;dy=-20;key=38;};
+			if(a==39 && key!=37) {dx=20;dy=0;key=39;};
+			if(a==40 && key!=38) {dx=0;dy=20;key=40;};
+		}
+    );
+    
+	function food()
+	{	
+		$('#ramka').append("<b><img src='12454-rat.png'></img></b>");
+		var b = document.getElementsByTagName('b');
+
+		b[0].x = Math.random()*465;  
+		b[0].y = Math.random()*465;
+		b[0].style.left = b[0].x+"px";  
+		b[0].style.top = b[0].y+"px";
+    }
+	
+	function anim()
+	{
+		var speed=0;
+		for(var a=0; a<=j; a++)
+		{
+			$("p:eq("+a+")").delay(speed).queue(function(){
+				$(this).css("background", "radial-gradient(black, red, black)").dequeue()});
+			speed+=50;
+		}	
+	}
+	
+	function snake()
+	{	
+	    var px = parseInt($("p:first").css("left"));
+		var py = parseInt($("p:first").css("top"));
+		var bx = parseInt($("b").css("left"));
+		var by = parseInt($("b").css("top"));
+	   
+		if(Math.abs(by-py)<=25 && Math.abs(bx-px)<=30)
+		{
+		    i++;
+			j++;
+			$("b").remove();
+			food();
+			$('#ramka').append("<p style='left:"+x+"px;top:"+y+"px'></p>")
+		}
+	}
+	
+	function wall()
+	{	
+		var px = parseInt($("p:first").css("left"));
+		var py = parseInt($("p:first").css("top"));
+		
+		if(px>=470 || px<=0 || py>=441 || py<=-1)
+			{
+				anim();
+				var y = document.getElementById('reload'); 
+				y.innerHTML="Wynik: "+i+"<br>"+"Kliknij, by spróbować ponownie";
+				clearInterval(sis);
+				$("#reload").css("visibility", "visible");
+			}	
+	}
+	
+	function self_cannibalism()
+	{	
+		var p = document.getElementsByTagName('p');
+		for(var t=1; t<=p.length; t++)
+			{
+				if(p[0].style.left==p[t].style.left && p[0].style.top==p[t].style.top)
+				{
+				    anim();
+					var y = document.getElementById('reload'); 
+					y.innerHTML="Wynik: "+i+"<br>"+"Kliknij, by spróbować ponownie";
+					clearInterval(sis);
+					$("#reload").css("visibility", "visible");
+			    }		
+			}
+	} 
+	
+	$("#start").on('click', function(){$(this).css("visibility", "hidden")});
+	
+	function interval()
+	{
+		sis = setInterval(move,200);
+		setInterval(snake,1);
+		setInterval(wall,1);
+		setInterval(self_cannibalism,1);
+	}
+	
+
+ </script>
+
+ </head>
+</html> 

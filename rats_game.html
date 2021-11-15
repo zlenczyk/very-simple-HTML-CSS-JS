@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet"
+	   href="https://fonts.googleapis.com/css?family=Indie+Flower"/>
+    <meta charset="utf-8">
+	<script src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+ 
+ <style> 
+    #ramka {
+		height:400px;
+		width:600px;
+		border:1px solid grey;
+		margin:auto;
+		position:relative;
+		background-color: #f5f5f0;
+		}
+	
+    b   {
+		display:block;
+		height:70px;
+		width:100px;
+		background:none;
+		position:absolute;
+		}
+		
+	img {
+		display:block;
+		height:70px;
+		width:100px;
+		position: absolute;
+		}
+	
+	td  {
+		text-align: center;
+		border: 1px solid white;
+		background-color: #990000;
+		}
+		
+	table {
+		height:470px;
+		width:680px;
+		position: absolute;
+		margin-left: 310px;
+		}
+		
+	td:nth-child(9n+1) {width:40px}
+	tr:nth-child(10n+1) {height:35px}
+	
+	h1  {
+		font-family: "Indie Flower";
+		color: white;
+		font-size: 70px;
+		text-align: center; 
+		margin-bottom: 0px;
+		margin-top: 0px;
+		}
+		
+	p  {
+		color: white; 
+		text-align: center;
+		margin-left: 200px;
+		margin-right: 200px; 
+		font-size: 17px;
+		}
+	
+    #punkty {
+		height: 150px; 
+		width: 376px; 
+		font-size: 30px;
+		margin-top: 80px;
+		background-color: white;
+		margin-left: 457px;
+		margin-top: 167.5px;
+		border: 3px solid black;
+		position: absolute;
+		visibility: hidden;
+		}
+ 
+    #start {
+	    margin-left: 30px;
+		width: 250px;
+		height: 60px;
+		font-size: 200%;
+		border-radius: 20px;
+		position: absolute;
+		margin-top: 30px;
+		}
+
+	button:hover {
+        box-shadow: 5px 10px 25px #737373;
+		cursor: pointer;
+        }
+		
+    .pozycje {
+		position: relative;
+		width: 1300px;
+		height: 485px;
+		margin: auto;
+		     }
+
+	</style>
+ 
+ 
+ <body bgcolor="black">
+    <h1>Cellar rats</h1>
+	<p>Masz 5 sekund, żeby zabić wszystkie szczury w piwnicy! Za każde kliknięcie na szczura otrzymujesz jeden punkt. Powodzenia!</p>
+    
+	<div class="pozycje">
+	    <table>
+		   <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><tr>
+		   <tr><td></td>
+			   <td colspan="8" rowspan="8"><div id="ramka">
+				 <b><img src="rat.png"></img></b>
+				 <b><img src="rat.png"></img></b>
+				 <b><img src="rat.png"></img></b>
+				 <b><img src="rat.png"></img></b>
+				 <b><img src="rat.png"></img></b>
+			  </div></td>
+		   <td></td><tr>
+		   <tr><td></td><td></td></tr>
+		   <tr><td></td><td></td></tr>
+		   <tr><td></td><td></td></tr>
+		   <tr><td></td><td></td></tr>
+		   <tr><td></td><td></td></tr>
+		   <tr><td></td><td></td></tr>
+		   <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><tr> 
+		</table>
+		<button id="punkty" onclick="location.reload()"></button>
+		<button id="start">Rozpocznij grę</button>
+	</div>
+ </body>
+ 
+ <script>
+    
+    function cos()
+	{
+       var b=document.getElementsByTagName('b');
+       var i;
+        for(i=0;i<b.length;i++)
+        {
+            b[i].x=Math.random()*498;
+            b[i].y=Math.random()*328;
+
+            b[i].vx=Math.random()*20-10;
+            b[i].vy=Math.random()*20-10;
+            
+            b[i].style.left=b[i].x+"px";
+            b[i].style.top =b[i].y+"px";
+        }
+	}	
+    function star()
+    {
+        var i;
+		var b=document.getElementsByTagName('b');
+        for(i=0;i<b.length;i++)
+        {
+            b[i].x+=b[i].vx;
+            b[i].y+=b[i].vy;
+            
+            if(b[i].x>498 || b[i].x<0)  
+            {
+				b[i].vx*=-1;
+				b[i].style.transform="rotate("+Math.atan2(b[i].vy,b[i].vx)+"rad)"; 
+			}
+            if(b[i].y>328 || b[i].y<0)
+            {
+				b[i].vy*=-1; 
+				b[i].style.transform="rotate("+Math.atan2(b[i].vy,b[i].vx)+"rad)";
+            }
+            
+            b[i].style.left=b[i].x+"px";
+            b[i].style.top =b[i].y+"px";
+            
+        }
+           setTimeout(star,70);
+    }
+	
+	//$("#start").on("click", function(){location.reload()});
+	
+	
+	$("#start").on("click",function(){
+	cos();
+	star();
+	});
+	
+	$("#start").on("click",function(){
+	   setTimeout(function(){$("#ramka").children().remove()},5000);
+	   $("b").click(function(){$(this).remove()});
+	   });
+	 
+	
+	var p = 0;
+	$("#start").on("click", function(){
+	   $("b").on("click", function(){
+	   p++;
+	   var y = document.getElementById('punkty'); 
+	   setTimeout(function(){
+	   $("#punkty").css("visibility", "visible");
+	   y.innerHTML="Zdobyłeś "+p+" pkt.! Kliknij, by spróbować ponownie!"},5000);
+	   })});
+	   
+	 
+	
+	    	
+ </script>
+ 
+ </head>
+</html> 
